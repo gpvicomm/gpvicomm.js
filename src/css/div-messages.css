@@ -1,0 +1,6 @@
+.payment-form .warning-message,
+.payment-form .validation-message {
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+}

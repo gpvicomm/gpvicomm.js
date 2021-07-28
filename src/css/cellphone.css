@@ -1,0 +1,14 @@
+.payment-form .cellphone-wrapper {
+  position: relative;
+}
+
+.payment-form .cellphone-wrapper .cellphone-country-code {
+  display: inline-block;
+  width: 28%;
+  margin-right: 2%;
+}
+
+.payment-form .cellphone-wrapper .cellphone {
+  display: inline-block;
+  width: 70%;
+}

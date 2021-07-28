@@ -1,0 +1,12 @@
+.payment-form .card-number-wrapper .card-type-icon {
+  height: 21px;
+  width: 32px;
+  position: absolute;
+  display: block;
+  right: 8px;
+  top: 7px;
+  pointer-events: none;
+  background-position-x: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}

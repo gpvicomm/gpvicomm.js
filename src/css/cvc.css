@@ -1,0 +1,14 @@
+.payment-form .cvc-container {
+  width: 50%;
+  float: right;
+}
+
+.payment-form .cvc-wrapper {
+  box-sizing: border-box;
+  margin-left: 5px;
+}
+
+.payment-form .cvc-wrapper .cvc {
+  display: block;
+  width: 100%;
+}

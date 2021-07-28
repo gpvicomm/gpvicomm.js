@@ -1,0 +1,23 @@
+.payment-form .nip-wrapper {
+  width: 50%;
+}
+
+.payment-form .nip-wrapper .nip {
+  display: block;
+  width: 100%;
+  -webkit-text-security: disc;
+}
+
+.payment-form .nip-wrapper .nip:read-only {
+  background-color: #eeeeee !important;
+}
+
+.payment-form .nip-wrapper .nip:-moz-read-only {
+  background-color: #eeeeee !important;
+}
+
+@media screen and (max-width: 600px) {
+  .payment-form .nip-wrapper {
+    width: 100%;
+  }
+}

@@ -1,0 +1,35 @@
+.payment-form .expiry-container {
+  width: 50%;
+  float: left;
+}
+
+.payment-form .expiry-wrapper {
+  box-sizing: border-box;
+  margin-right: 5px;
+}
+
+.payment-form .expiry-wrapper .expiry {
+  display: block;
+  width: 100%;
+}
+
+.payment-form .expiry-wrapper .expiry {
+  width: 100%;
+  padding-left: 38px;
+}
+
+.payment-form .expiry-wrapper .expiry-month,
+.payment-form .expiry-wrapper .expiry-year {
+  border-radius: 4px;
+  display: inline-block;
+  width: 48%;
+  text-align-last: center;
+}
+
+.payment-form .expiry-wrapper .expiry-month {
+  padding-left: 38px;
+}
+
+.payment-form .expiry-wrapper .expiry-year {
+  margin-left: 4%;
+}
