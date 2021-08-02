@@ -1,13 +1,13 @@
 # Global Payments ViComm
 ===================
 
-GpvicommJS is a library that allows developers to easily connect to the Global Payments ViComm CREDITCARDS API
+Global Payments ViComm JS es una biblioteca que permite a los desarrolladores conectar fácilmente con el API de TARJETAS DE CRÉDITO de Global Payments ViComm.
 
-[View working example >](https://developers.gpvicomm.com/docs/payments/#javascript)
+[Revise el ejemplo funcionando](https://developers.gpvicomm.com/docs/payments/#javascript)
 
-## Installation
+## Instalación
 
-You will need to include jQuery and both `payment_stable.min.js` and `payment_stable.min.css` into your webpage specifying "UTF-8" like charset.
+Primero necesitas incluir jQuery y los archivos `payment_stable.min.js` y `payment_stable.min.css` dentro de tu página web especificando "UTF-8" como charset.
 
 ```html
 <script src="https://code.jquery.com/jquery-1.11.3.min.js" charset="UTF-8"></script>
@@ -16,88 +16,96 @@ You will need to include jQuery and both `payment_stable.min.js` and `payment_st
 <script src="https://cdn.gpvicomm.com/ccapi/sdk/payment_stable.min.js" charset="UTF-8"></script>
 ```
 
+## Uso
 
-## Usage
+### Utilizando el Form de Global Payments ViComm
 
-For working examples of using GpvicommJS, see the [examples](https://github.com/gpvicomm/gpvicomm.js/tree/master/examples) folder of this project.
+Cualquier elemento con la clase `payment-form` será automáticamente convertido en una entrada de tarjeta de crédito básica con fecha de vencimiento y el check de CVC.
 
-### Using the gpvicomm Form
-Any elements with the class `payment-form` will be automatically converted into a basic credit card input with the expiry date and CVC check.
+La manera más fácil de comenzar con GpViCommForm es insertando el siguiente pedazo de código:
 
-The easiest way to get started with PaymentForm is to insert the snippet of code:
 ```html
 <div class="payment-form" id="my-card" data-capture-name="true"></div>
 ```
+Para obtener el objeto `Card` de la instancia `PaymentForm`, pregunte al formulario por su tarjeta.
 
-To get a `Card` object from the `PaymentForm`, you ask the form for its card.
 
 ```javascript
-var myCard = $('#my-card');
-var cardToSave = myCard.PaymentForm('card');
+let myCard = $('#my-card');
+let cardToSave = myCard.PaymentForm('card');
 if(cardToSave == null){
   alert("Invalid Card Data");
 }
 ```
 
-If the returned `Card` is null, error states will show on the fields that need to be fixed.
+Si la tarjeta (`Card`) regresada es null, el estado de error mostrará los campos que necesitan ser arreglados.
 
-Once you have a non-null `Card` object from the widget, you can call [addCard](#addcard).
+Una vez que obtengas un objeto no null de la tarjeta (`Card`) del widget, podrás llamar [addCard](#addcard-agregar-una-tarjeta).
 
-### Init library
-You should initialize the library.
+
+### Biblioteca Init
+
+Siempre debes inicializar la biblioteca.
 
 ```javascript
 /**
   * Init library
   *
-  * @param env_mode `prod`, `stg`, `local` to change environment. Default is `stg`
-  * @param payment_client_app_code provided by Gpvicomm.
-  * @param payment_client_app_key provided by Gpvicomm.
+  * @param env_mode `prod`, `stg`, `local` para cambiar ambiente. Por defecto es `stg`
+  * @param client_app_code proporcionado por Global Payments ViComm.
+  * @param client_app_key proporcionado por Global Payments ViComm.
   */
-Payment.init('stg', 'PAYMENT_CLIENT_APP_CODE', 'PAYMENT_CLIENT_APP_KEY');
+Payment.init('stg', 'CLIENT_APP_CODE', 'CLIENT_APP_KEY');
 ```
 
-### addCard
+### addCard Agregar una Tarjeta
 
-addCard converts sensitive card data to a single-use token which you can safely pass to your server to charge the user.
+La función addCard convierte los datos confidenciales de una tarjeta, en un token que puede pasar de forma segura a su servidor, para realizar el cobro al usuario.
+
+Esta funcionalidad consume el servicio de nuestro API pero de manera segura para comercios que no cuentan con certificación PCI.
+[Aquí](https://developers.gpvicomm.com/api/#metodos-de-pago-tarjetas-agregar-una-tarjeta) podras encontrar la descripción de cada campo en la respuesta.
 
 ```javascript
-/* Add Card converts sensitive card data to a single-use token which you can safely pass to your server to charge the user.
- *
- * @param uid User identifier. This is the identifier you use inside your application; you will receive it in notifications.
- * @param email Email of the user initiating the purchase. Format: Valid e-mail format.
- * @param card the Card used to create this payment token
- * @param success_callback a callback to receive the token
- * @param failure_callback a callback to receive an error
- * @param payment_form Payment Form instance
+/*
+ * @param uid Identificador del usuario. Este es el id que usas del lado de tu aplicativo.
+ * @param email Email del usuario para iniciar la compra. Usar el formato válido para e-mail.
+ * @param card La tarjeta que se desea tokenizar.
+ * @param success_callback Funcionalidad a ejecutar cuando el servicio de la pasarela responde correctamente. (Incluso si se recibe un estado diferente a "valid")
+ * @param failure_callback Funcionalidad a ejecutar cuando el servicio de la pasarela responde con un error.
  */
-Payment.addCard(uid, email, cardToSave, successHandler, errorHandler, myCard);
+Payment.addCard(uid, email, cardToSave, successHandler, errorHandler);
 
-var successHandler = function(cardResponse) {
+let successHandler = function(cardResponse) {
   console.log(cardResponse.card);
   if(cardResponse.card.status === 'valid'){
-    $('#messages').html('Card Successfully Added<br>'+
-                  'status: ' + cardResponse.card.status + '<br>' +
-                  "Card Token: " + cardResponse.card.token + "<br>" +
-                  "transaction_reference: " + cardResponse.card.transaction_reference
+    $('#messages').html('Tarjeta correctamente agregada<br>'+
+                  'Estado: ' + cardResponse.card.status + '<br>' +
+                  "Token: " + cardResponse.card.token + "<br>" +
+                  "Referencia de transacción: " + cardResponse.card.transaction_reference
                 );
   }else if(cardResponse.card.status === 'review'){
-    $('#messages').html('Card Under Review<br>'+
-                  'status: ' + cardResponse.card.status + '<br>' +
-                  "Card Token: " + cardResponse.card.token + "<br>" +
-                  "transaction_reference: " + cardResponse.card.transaction_reference
+    $('#messages').html('Tarjeta en revisión<br>'+
+                  'Estado: ' + cardResponse.card.status + '<br>' +
+                  "Token: " + cardResponse.card.token + "<br>" +
+                  "Referencia de transacción: " + cardResponse.card.transaction_reference
+                );
+  }else if(cardResponse.card.status === 'pending'){
+    $('#messages').html('Tarjeta pendiente de aprobar<br>'+
+                  'Estado: ' + cardResponse.card.status + '<br>' +
+                  "Token: " + cardResponse.card.token + "<br>" +
+                  "Referencia de transacción: " + cardResponse.card.transaction_reference
                 );
   }else{
     $('#messages').html('Error<br>'+
-                  'status: ' + cardResponse.card.status + '<br>' +
-                  "message Token: " + cardResponse.card.message + "<br>"
+                  'Estado: ' + cardResponse.card.status + '<br>' +
+                  "Mensaje: " + cardResponse.card.message + "<br>"
                 );
   }
   submitButton.removeAttr("disabled");
   submitButton.text(submitInitialText);
 };
 
-var errorHandler = function(err) {
+let errorHandler = function(err) {
   console.log(err.error);
   $('#messages').html(err.error.type);
   submitButton.removeAttr("disabled");
@@ -105,36 +113,30 @@ var errorHandler = function(err) {
 };
 ```
 
-The third argument to addCard is a Card object. A Card contains the following fields:
-
-+ number: card number as a string without any separators, e.g. '4242424242424242'.
-+ holder_name: cardholder name.
-+ expiry_month: integer representing the card's expiration month, e.g. 12.
-+ expiry_year: integer representing the card's expiration year, e.g. 2013.
-+ cvc: card security code as a string, e.g. '123'.
+El tercer argumento para el addCard es un objeto Card que contiene los campos requeridos para realizar la tokenización.
 
 
 ### getSessionId
 
-The Session ID is a parameter Gpvicomm use for fraud purposes.
-Call this method if you want to Collect your user's Device Information.
+El Session ID es un parámetro que Global Payments ViComm utiliza para fines del antifraude.
+Llame este método si usted desea recolectar la información del dispositivo del usuario.
 
 ```javascript
-var session_id = Payment.getSessionId();
+let session_id = Payment.getSessionId();
 ```
 
-Once you have the Session ID, you can pass it to your server to charge the user.
+Una vez que tenga el Session ID, puedes pasarlo a tu servidor para realizar el cargo al usuario.
 
 
-## PaymentForm Complete Reference
+## PaymentForm Referencia Completa
 
-### Manual Insertion
+### Inserción Manual
 
-If you wish to manually alter the fields used by PaymentForm to add additional classes or set the input field placeholder, name or id. you can pre-populate the form fields as show below.
+Si desea alterar manualmente los campos utilizados por PaymentForm para añadir clases adicionales, el placeholder o id. Puedes rellenar previamente los campos del formulario como se muestra a continuación.
 
-This could be helpful in case you want to Render the Form in another Language (by default the Form is Rendered in Spanish), or to reference some input by name or id.
+Esto podría ser útil en caso de que desees procesar el formulario en otro idioma (de forma predeterminada, el formulario se representa en español), o para hacer referencia a alguna entrada por nombre o id.
 
-For example if you want to render the form in English and add a custom class to the card-number
+Por ejemplo si desea mostrar el formulario en Inglés y añadir una clase personalizada para el _card_number_
 ```html
 <div class="payment-form">
   <input class="card-number my-custom-class" name="card-number" placeholder="Card number">
@@ -146,22 +148,22 @@ For example if you want to render the form in English and add a custom class to 
 ```
 
 
-### Select Fields
-You can determinate the fields to show on your form.
+### Seleccionar Campos
+Puedes determinar los campos que mostrará el formulario.
 
-| Field                             | Description                                                |
-| :-------------------------------- | :--------------------------------------------------------- |
-| data-capture-name                 | Card Holder Name                                           |
-| data-capture-email                | User Email                                                 |
-| data-capture-cellphone            | User Cellphone                                             |
-| data-icon-colour                  | Icons color                                                |
-| data-use-dropdowns                | Use dropdowns to set the Card Expiration Date              |
-| data-exclusive-types              | Define allowed card types                                  |
-| data-invalid-card-type-message    | Define a custom message to show for invalid card types     |
+| Field                             | Description                                                      |
+| :-------------------------------- | :--------------------------------------------------------------- |
+| data-capture-name                 | Input para nombre del Tarjetahabiente, requerido para tokenizar  |
+| data-capture-email                | Input para email del usuario                                     |
+| data-capture-cellphone            | Input para teléfono celular del usuario                          |
+| data-icon-colour                  | Color de los íconos                                              |
+| data-use-dropdowns                | Utiliza una lista desplegable para establecer la fecha de expiración de la tarjeta   |
+| data-exclusive-types              | Define los tipos de tarjetas permitidos                          |
+| data-invalid-card-type-message    | Define un mensaje personalizado para mostrar cuando se registre una tarjeta no permitida  |
 
-The 'data-use-dropdowns' can solve an issue with the expiration mask in not so recent mobiles.
+El campo 'data-use-dropdowns' puede resolver el problema que se presenta con la mascara de expiración en dispositivos móviles antiguos.
 
-Integrate in the form is so simple like this
+Se integra en el form de manera simple, como se muestra a continuación:
 ```html
 <div class="payment-form"
 id="my-card"
@@ -172,10 +174,11 @@ data-icon-colour="#569B29"
 data-use-dropdowns="true">
 ```
 
-### Specific the card types
-If you want specify the card types allowed in the form, like Exito or Alkosto. You can do something like next example.
-when a card type not allowed is seted, the form is reset, block the inputs and show a message, the default message is
+### Tipos de tarjetas específicos
+Si deseas especificar los tipos de tarjetas permitidos en el formulario, como Exito o Alkosto. Puedes configurarlo como en el siguiente ejemplo:
+Cuando una tarjeta de un tipo no permitido es capturado, el formulario se reinicia, bloqueando las entradas y mostrando un mensaje
 *Tipo de tarjeta invalida para está operación.*
+
 
 ```html
 <div class="payment-form"
@@ -185,144 +188,57 @@ data-exclusive-types="ex,ak"
 data-invalid-card-type-message="Tarjeta invalida. Por favor ingresa una tarjeta Exito / Alkosto."
 >
 ```
+Revisa todos los [tipos de tarjetas](https://developers.gpvicomm.com/api/#metodos-de-pago-tarjetas-marcas-de-tarjetas) permitidos por Global Payments ViComm.
 
-Follow this link to see all [card types](https://gpvicomm.github.io/api-doc/#payment-methods-cards-card-brands) allowed by Gpvicomm.
 
+### Leyendo los Valores
 
-### Reading Values
+PaymentForm proporciona funcionalidad que le permite leer los valores del campo de formulario directamente con JavaScript.
 
-PaymentForm provides functionality allowing you to read the form field values directly with JavaScript. This can be useful if you wish to submit the values via Ajax.
-
-Create a PaymentForm element and give it a unique id (in this example `my-card`)
+Genera un elemento de PaymentForm y asigne un id único (en este ejemplo `my-card`)
 
 ```html
 <div class="payment-form" id="my-card" data-capture-name="true"></div>
 ```
+El siguiente javascript muestra cómo leer cada valor del formulario en variables locales.
 
-The javascript below demonstrates how to read each value of the form into local variables.
 
 ```javascript
-var myCard = $('#my-card');
+let myCard = $('#my-card');
 
-var cardNumber = myCard.PaymentForm('cardNumber');
-var cardType = myCard.PaymentForm('cardType');
-var name = myCard.PaymentForm('name');
-var expiryMonth = myCard.PaymentForm('expiryMonth');
-var expiryYear = myCard.PaymentForm('expiryYear');
-var fiscalNumber = myCard.PaymentForm('fiscalNumber');
-var validationOption = myCard.PaymentForm('validationOption');
+let cardType = myCard.PaymentForm('cardType');
+let name = myCard.PaymentForm('name');
+let expiryMonth = myCard.PaymentForm('expiryMonth');
+let expiryYear = myCard.PaymentForm('expiryYear');
+let fiscalNumber = myCard.PaymentForm('fiscalNumber');
 ```
 
 
-### Functions
+### Funciones
 
-To call a function on a PaymentForm element, follow the pattern below.
-Replace the text 'function' with the name of the function you wish to call.
+Para llamar a una función en un elemento PaymentForm, sigue el patrón a continuación.
+Remplace el texto 'function' con el nombre de la función que desea llamar.
 
 ```javascript
 $('#my-card').PaymentForm('function')
 ```
 
-The functions available are listed below:
+Las funciones disponibles se enumeran a continuación
 
 | Function          | Description                                    |
 | :---------------- | :--------------------------------------------- |
-| card              | Get the card object                            |
-| cardNumber        | Get the card number entered                    |
-| cardType          | Get the type of the card number entered        |
-| name              | Get the name entered                           |
-| expiryMonth       | Get the expiry month entered                   |
-| expiryYear        | Get the expiry year entered                    |
-| fiscalNumber      | Get the fiscal number                          |
-| validationOption  | Get the validation option                      |
+| card              | Obtiene la tarjeta del objeto                  |
+| cardType          | Obtiene el tipo de tarjeta que se capturó      |
+| name              | Obtiene el nombre capturado                    |
+| expiryMonth       | Obtiene el mes de expiración de la tarjeta     |
+| expiryYear        | Obtiene el año de expiración de la tarjeta     |
+| fiscalNumber      | Obtiene el número fiscal del usuario / cédula  |
 
 
 
-#### CardType Function
+#### Función CardType
 
-The `cardType` function will return one of the following strings based on the card number entered.
-If the card type cannot be determined an empty string will be given instead.
+La función `cardType` devolverá una cadena según el número de tarjeta ingresado. Si no se puede determinar el tipo de tarjeta, se le dará una cadena vacía.
 
-| Card Type              |
-| :--------------------- |
-| AMEX                   |
-| Diners                 |
-| Diners - Carte Blanche |
-| Discover               |
-| JCB                    |
-| Mastercard             |
-| Visa                   |
-| Visa Electron          |
-| Exito                  |
+[Marcas permitidas](https://developers.gpvicomm.com/api/#metodos-de-pago-tarjetas-marcas-de-tarjetas)
 
-
-
-### Static functions
-
-If you just want to perform simple operations without the PaymentForm form, there are a number of static functions provided
-by the PaymentForm library that are made available.
-
-
-#### Card Type from Card Number
-```javascript
-var cardNumber = '4242 4242 4242 4242'; // Spacing is not important
-var cardType = PaymentForm.cardTypeFromNumber(cardNumber);
-```
-
-#### Cleaning and Masking
-```javascript
-// var formatMask = 'XXXX XXXX XXXX XXXX'; // You can manually define an input mask
-// var formatMask = 'XX+X X XXXX XXXX XXXX'; // You can add characters other than spaces to the mask
-var formatMask = PaymentForm.CREDIT_CARD_NUMBER_VISA_MASK; // Or use a standard mask.
-var cardNumber = '424 2424242 42   42 42';
-var cardNumberWithoutSpaces = PaymentForm.numbersOnlyString(cardNumber);
-var formattedCardNumber = PaymentForm.applyFormatMask(cardNumberWithoutSpaces, formatMask);
-```
-
-##### Masks
-
-| Variable Name                                    | Mask
-| :----------------------------------------------- | :------------------ |
-| PaymentForm.CREDIT_CARD_NUMBER_DEFAULT_MASK    | XXXX XXXX XXXX XXXX |
-| PaymentForm.CREDIT_CARD_NUMBER_VISA_MASK       | XXXX XXXX XXXX XXXX |
-| PaymentForm.CREDIT_CARD_NUMBER_MASTERCARD_MASK | XXXX XXXX XXXX XXXX |
-| PaymentForm.CREDIT_CARD_NUMBER_DISCOVER_MASK   | XXXX XXXX XXXX XXXX |
-| PaymentForm.CREDIT_CARD_NUMBER_JCB_MASK        | XXXX XXXX XXXX XXXX |
-| PaymentForm.CREDIT_CARD_NUMBER_AMEX_MASK       | XXXX XXXXXX XXXXX   |
-| PaymentForm.CREDIT_CARD_NUMBER_DINERS_MASK     | XXXX XXXX XXXX XX   |
-| PaymentForm.CREDIT_CARD_NUMBER_EXITO_MASK      | XXXX XXXX XXXX XXXX |
-
-
-
-### Card Expiry Validation
-The expiry month can be in the range: 1 = January to 12 = December
-In the case of 'Exito' cards, they do not have an expiration date
-
-```javascript
-var month = 3;
-var year = 2019;
-var valid = PaymentForm.isExpiryValid(month, year);
-```
-
-The expiry month and year can be either and integer or a string.
-```javascript
-var month = "3";
-var year = "2019";
-var valid = PaymentForm.isExpiryValid(month, year);
-```
-
-The expiry year can be either 4 digits or 2 digits long.
-```javascript
-var month = "3";
-var year = "19";
-var valid = PaymentForm.isExpiryValid(month, year);
-```
-
-### Card Validations Options
-There are three card validation options
-
-| Validation Option      | Description
-| :--------------------- | :----------------------------------------------------- |
-| PaymentForm.AUTH_CVC | Card validation by cvc, the most common option         |
-| PaymentForm.AUTH_NIP | Card validation by nip (Available only by Exito cards) |
-| PaymentForm.AUTH_OTP | Card validation by otp (Available only by Exito cards) |
