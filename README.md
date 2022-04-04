@@ -1,7 +1,7 @@
-# Global Payments ViComm
+# GpViComm
 ===================
 
-Global Payments ViComm JS es una biblioteca que permite a los desarrolladores conectar fácilmente con el API de TARJETAS DE CRÉDITO de Global Payments ViComm.
+GpViComm JS es una biblioteca que permite a los desarrolladores conectar fácilmente con el API de TARJETAS DE CRÉDITO de Global Payments ViComm.
 
 [Revise el ejemplo funcionando](https://developers.gpvicomm.com/docs/payments/#javascript)
 
@@ -18,7 +18,7 @@ Primero necesitas incluir jQuery y los archivos `payment_stable.min.js` y `payme
 
 ## Uso
 
-### Utilizando el Form de Global Payments ViComm
+### Utilizando el Form de GpViComm
 
 Cualquier elemento con la clase `payment-form` será automáticamente convertido en una entrada de tarjeta de crédito básica con fecha de vencimiento y el check de CVC.
 
